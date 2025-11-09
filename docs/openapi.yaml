@@ -32,4 +32,18 @@ paths:
       - url: /api
         description: Available in GA API only
 components:
-  schemas: {}
+  schemas:
+    Error:
+      required:
+      - errorCode
+      - message
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: "an error code more intended for machines of the specific error\
+            \ (for instance UNAUTH, NOT_FOUND)."
+        message:
+          type: string
+          description: A human friendly description of the error for either UI or
+            logging purposes.
