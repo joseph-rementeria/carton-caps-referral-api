@@ -4,7 +4,7 @@ info:
   version: v1
   description: |
     This is a full technical description of the endpoints (backend API) for the referral app called
-    Carton Caps. This definition servers double porpuse: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
+    Carton Caps. This definition serves double purpose: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
     In other words, this is a contract for the backend to implement and for the client (or frontend) to use.
 
 servers:
@@ -14,12 +14,15 @@ servers:
     description: Staging experimental API base path
 
 paths:
-  /health:
+  /ping:
     get:
       summary: Is the API running?
       tags:
         - Health
-      description: A simple endpoint to check that the service is up and running.
+      description: A simple endpoint to check the liveliness of the service.
+      servers:
+        - url: /api
+          description: Available in GA API only
       responses:
         '200':
           description: Service is running
@@ -27,6 +30,21 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: Check
+                example: pong
                 enum:
-                  - Check
+                  - pong
+components:
+  schemas:
+    # You will define your Referral and Error schemas here later
+    # For now, you can leave this empty or add a simple placeholder.
+    Placeholder:
+      type: object
+      description: Temporary placeholder schema.
+
+  securitySchemes:
+    # Define the authentication scheme used by your existing API
+    UserAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Existing application authentication using a Bearer token (JWT).
