@@ -3,15 +3,15 @@ info:
   title: Carton Caps Referral API Definition
   version: v1
   description: |
-  This is a full technical description of the endpoints (backend API) for the referral app called
-  Carton Caps. This definition servers double porpuse: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
-  In other words, this is a contract for the backend to implement and for the client (or frontend) to use.
+    This is a full technical description of the endpoints (backend API) for the referral app called
+    Carton Caps. This definition servers double porpuse: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
+    In other words, this is a contract for the backend to implement and for the client (or frontend) to use.
 
 servers:
   - url: /api
-  description: GA API base path
+    description: GA API base path
   - url: /beta
-  description: Staging experimental API base path
+    description: Staging experimental API base path
 
 paths:
   /health:
