@@ -1,30 +1,25 @@
 openapi: 3.0.3
 info:
-  title: Carton Caps Referral API Definition
-  version: v1
+  title: Carton Caps Referral API
   description: |
     This is a full technical description of the endpoints (backend API) for the referral app called
     Carton Caps. This definition serves double purpose: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
     In other words, this is a contract for the backend to implement and for the client (or frontend) to use.
-
+  version: v1
 servers:
-  - url: /api
-    description: GA API base path
-  - url: /beta
-    description: Staging experimental API base path
-
+- url: /api
+  description: GA API base path
+- url: /beta
+  description: Staging experimental API base path
 paths:
   /ping:
     get:
-      summary: Is the API running?
       tags:
-        - Health
+      - Health
+      summary: Is the API running?
       description: A simple endpoint to check the liveliness of the service.
-      servers:
-        - url: /api
-          description: Available in GA API only
       responses:
-        '200':
+        "200":
           description: Service is running
           content:
             text/plain:
@@ -32,19 +27,9 @@ paths:
                 type: string
                 example: pong
                 enum:
-                  - pong
+                - pong
+      servers:
+      - url: /api
+        description: Available in GA API only
 components:
-  schemas:
-    # You will define your Referral and Error schemas here later
-    # For now, you can leave this empty or add a simple placeholder.
-    Placeholder:
-      type: object
-      description: Temporary placeholder schema.
-
-  securitySchemes:
-    # Define the authentication scheme used by your existing API
-    UserAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: Existing application authentication using a Bearer token (JWT).
+  schemas: {}
