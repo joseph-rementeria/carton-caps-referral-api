@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
   title: Carton Caps Referral API
   description: |
@@ -33,6 +33,54 @@ paths:
         description: Available in GA API only
 components:
   schemas:
+    Referral:
+      required:
+      - referralCode
+      - referralId
+      - status
+      type: object
+      properties:
+        referralId:
+          type: string
+          description: identifier for each deep link
+          format: uuid
+        referralCode:
+          type: string
+          description: the code user's referral code
+        dateCreated:
+          type: string
+          description: generation date of the code
+          format: date-time
+        status:
+          type: string
+          description: status of the referral process
+          enum:
+          - PENDING
+          - INSTALLED
+          - REGISTERED
+          - REWARDED
+        referredUserEmail:
+          type: string
+          description: email of the referred person
+          format: email
+          nullable: true
+    NewReferralResponse:
+      required:
+      - referralId
+      - shortUrl
+      type: object
+      properties:
+        referralId:
+          $ref: "#/components/schemas/Referral/properties/referralId"
+        shortUrl:
+          type: string
+          description: shareable deferred deep link URL to be sent to the referred
+            user
+          format: url
+        deepLinkPayload:
+          type: string
+          description: third party specific payload needed by the app to get the shareable
+            link
     Error:
       required:
       - errorCode
