@@ -232,3 +232,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Referral"
+  securitySchemes:
+    UserAuth:
+      type: http
+      description: Bearer token provided by another microservice in the organization
+      scheme: bearer
+      bearerFormat: JWT
