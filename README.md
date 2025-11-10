@@ -10,4 +10,8 @@ You can find first deliverable in the folder `/docs` and an specialised README f
 Link for easy access: [SwaggerHub: Carton Caps Referral API](https://app.swaggerhub.com/apis/notapplicable-afc/carton-caps-referral-api-definition/v1)
 
 ## ASP.NET RESTful API
+### Prerequisites 
+* An IDE such as Visual Studio Code
+* .NET 8 SDK installed
+
 > TODO: add documentation as soon as the thingy is implemented
