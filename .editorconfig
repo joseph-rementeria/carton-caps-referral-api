@@ -1,0 +1,13 @@
+# Configuration for all files and projects
+root = true
+
+[*]
+# General text editor settings
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+# C# specific style settings
+csharp_prefer_namespace_scope = file:suggestion
