@@ -10,4 +10,5 @@ public record TrackingId
             throw new InvalidTrackingIdException(trackingId);
         Value = result;
     }
+    public static implicit operator Guid(TrackingId id) => id.Value;
 }

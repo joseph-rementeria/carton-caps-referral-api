@@ -10,4 +10,7 @@ public record ReferralId
         Value = referralId;
     }
     public static ReferralId New() => new(Guid.NewGuid());
+
+    public static implicit operator Guid(ReferralId id) => id.Value;
+    public static implicit operator ReferralId(Guid guid) => new(guid);
 }
