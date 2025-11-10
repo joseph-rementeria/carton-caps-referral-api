@@ -3,7 +3,8 @@ info:
   title: Carton Caps Referral API
   description: |
     This is a full technical description of the endpoints (backend API) for the referral app called
-    Carton Caps. This definition serves double **purpose**: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
+    Carton Caps. This definition serves double **purpose**: 1. for the backend to implement a clear goal,
+    2. for the clients to know and understand how to use the api.
     In other words, this is a contract for the backend to implement and for the client (or frontend) to use.
   version: v1
 servers:
@@ -153,6 +154,106 @@ paths:
       servers:
       - url: /api
         description: Available in GA API only
+  /referrals/events/installed:
+    post:
+      tags:
+      - Referrals
+      summary: Webhook to update the status to installed
+      description: "When a customer shares the code, the third-party that handles\
+        \ the deep \nlink will call this so that the status can change from pending\
+        \ to installed.\n**Security Note:** Requires shared-secret validation\n"
+      requestBody:
+        description: "Deep-link third-party payload, that sould contains the tracking\
+          \ ID"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/events_installed_body"
+      responses:
+        "204":
+          description: Status is successfully updated.
+        "404":
+          description: Not found. there is not referral with the given tracking id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+      - SignatureAuth: []
+      servers:
+      - url: /api
+        description: Available in GA API only
+  /referrals/{referralId}/registered:
+    post:
+      tags:
+      - Referrals
+      summary: Update the status of a referral to registered
+      description: |
+        This is called by the internal registration services to update the status of a referral to
+        registered. It uses the referralId rather than the tracking ID because this endpoint is to
+        be used internally rather than externally.
+      parameters:
+      - name: referralId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          description: The referral identifier
+          format: uuid
+      requestBody:
+        description: Leave empty
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        "204":
+          description: Status successfully updated to REGISTERED.
+        "404":
+          description: Not found. There is no referral with the given ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+      - InternalApiKey: []
+      servers:
+      - url: /api
+        description: Available in GA API only
+  /referrals/{referralId}/rewarded:
+    post:
+      tags:
+      - Referrals
+      summary: Update status to rewarded
+      description: |
+        Called by the other micro service after the payment was processed.
+      parameters:
+      - name: referralId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          description: The referral's identifier
+          format: uuid
+      responses:
+        "204":
+          description: Status successfully updated to rewarded.
+        "404":
+          description: Not found. There is no referral with the given ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+      - InternalApiKey: []
+      servers:
+      - url: /api
+        description: Available in GA API only
 components:
   schemas:
     Referral:
@@ -186,6 +287,11 @@ components:
           description: Email of the referred person
           format: email
           nullable: true
+        trackingId:
+          type: string
+          description: "unique identifier for the referral just for tracking the process\
+            \ externally (for instance: deep link)"
+          format: uuid
     NewReferralResponse:
       required:
       - referralId
@@ -232,9 +338,31 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Referral"
+    events_installed_body:
+      required:
+      - trackingId
+      type: object
+      properties:
+        trackingId:
+          type: string
+          description: tracking id used to link the newly installed account to update
+            the referral status
+          format: uuid
   securitySchemes:
     UserAuth:
       type: http
       description: Bearer token provided by another microservice in the organization
       scheme: bearer
       bearerFormat: JWT
+    SignatureAuth:
+      type: apiKey
+      description: |
+        Authentication is done using Hash-based Message Authentication Code signature verification.
+        The client encrypts or sings the body of the request , and the signature is sent in the header.
+      name: X-Signature
+      in: header
+    InternalApiKey:
+      type: apiKey
+      description: Internal microservices communication key
+      name: X-Internal-Key
+      in: header
