@@ -1,30 +1,25 @@
 openapi: 3.0.3
 info:
-  title: Carton Caps Referral API Definition
-  version: v1
+  title: Carton Caps Referral API
   description: |
     This is a full technical description of the endpoints (backend API) for the referral app called
-    Carton Caps. This definition serves double purpose: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
+    Carton Caps. This definition serves double **purpose**: 1. for the backend to implement a clear goal, 2. for the clients to know and understand how to use the api.
     In other words, this is a contract for the backend to implement and for the client (or frontend) to use.
-
+  version: v1
 servers:
-  - url: /api
-    description: GA API base path
-  - url: /beta
-    description: Staging experimental API base path
-
+- url: /api
+  description: GA API base path
+- url: /beta
+  description: Staging experimental API base path
 paths:
   /ping:
     get:
-      summary: Is the API running?
       tags:
-        - Health
+      - Health
+      summary: Is the API running?
       description: A simple endpoint to check the liveliness of the service.
-      servers:
-        - url: /api
-          description: Available in GA API only
       responses:
-        '200':
+        "200":
           description: Service is running
           content:
             text/plain:
@@ -32,19 +27,208 @@ paths:
                 type: string
                 example: pong
                 enum:
-                  - pong
+                - pong
+      servers:
+      - url: /api
+        description: Available in GA API only
+  /referrals:
+    get:
+      tags:
+      - Referrals
+      summary: List All User Referrals
+      description: "Returns the list of all referrals created by the current user,\
+        \ paginated"
+      parameters:
+      - name: page
+        in: query
+        description: "Page to be loaded (example: page=1)"
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 1
+      - name: pageSize
+        in: query
+        description: "Number of elements per page (example: pageSize=15)"
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 25
+      responses:
+        "200":
+          description: The list was returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200"
+        "401":
+          description: Unauthorized. User must be authenticated to view the referrals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+      - UserAuth: []
+      servers:
+      - url: /api
+        description: Available in GA API only
+    post:
+      tags:
+      - Referrals
+      summary: Create a new deferred deep link
+      description: |
+        Creates a new referral association with the authenticated user referral code.
+        Here a third-party service will be used to delegate the deep link data and final shareable URL. IMPORTANT: the endpoint should validate requests per minute or seconds for as a security measure for abuse control.
+      responses:
+        "201":
+          description: Referral instance created sucessfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewReferralResponse"
+        "401":
+          description: Unauthorized. User must be authenticated to create a referral.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: "Too Many Requests. Rate limit exceeded, indicating a potential\
+            \ abuse attempt."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+      - UserAuth: []
+      servers:
+      - url: /api
+        description: Available in GA API only
+  /referrals/{referralId}:
+    get:
+      summary: Get detailed referral status
+      description: "Returns the detailed for the given ID, used to get the deep link\
+        \ within the details"
+      parameters:
+      - name: referralId
+        in: path
+        description: The identifier of the referral to be viewed
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Successfully returned the referral details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Referral"
+        "401":
+          description: Unauthorized. User must be authenticated to view the referral
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: "Forbidden, the authenticated user should not view this specific\
+            \ referralId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Not found. There is no referral with the given ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security:
+      - UserAuth: []
+      servers:
+      - url: /api
+        description: Available in GA API only
 components:
   schemas:
-    # You will define your Referral and Error schemas here later
-    # For now, you can leave this empty or add a simple placeholder.
-    Placeholder:
+    Referral:
+      required:
+      - referralCode
+      - referralId
+      - status
       type: object
-      description: Temporary placeholder schema.
-
-  securitySchemes:
-    # Define the authentication scheme used by your existing API
-    UserAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: Existing application authentication using a Bearer token (JWT).
+      properties:
+        referralId:
+          type: string
+          description: Identifier for each deep link
+          format: uuid
+        referralCode:
+          type: string
+          description: The code user's referral code
+        dateCreated:
+          type: string
+          description: Generation date of the code
+          format: date-time
+        status:
+          type: string
+          description: Status of the referral process
+          enum:
+          - PENDING
+          - INSTALLED
+          - REGISTERED
+          - REWARDED
+        referredUserEmail:
+          type: string
+          description: Email of the referred person
+          format: email
+          nullable: true
+    NewReferralResponse:
+      required:
+      - referralId
+      - shortUrl
+      type: object
+      properties:
+        referralId:
+          $ref: "#/components/schemas/Referral/properties/referralId"
+        shortUrl:
+          type: string
+          description: Shareable deferred deep link URL to be sent to the referred
+            user
+          format: url
+        deepLinkPayload:
+          type: string
+          description: Third party specific payload needed by the app to get the shareable
+            link
+    Error:
+      required:
+      - errorCode
+      - message
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: "An error code more intended for machines of the specific error\
+            \ (for instance UNAUTH, NOT_FOUND)."
+        message:
+          type: string
+          description: A human friendly description of the error for either UI or
+            logging purposes.
+    inline_response_200:
+      required:
+      - items
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        pageSize:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Referral"
