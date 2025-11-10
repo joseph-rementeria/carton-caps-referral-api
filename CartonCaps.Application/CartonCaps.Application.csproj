@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\CartonCaps.Referral.Application\CartonCaps.Referral.Application.csproj" />
+    <ProjectReference Include="..\CartonCaps.Domain\CartonCaps.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CartonCaps.Referral.Application\CartonCaps.Referral.Application.csproj" />
-    <ProjectReference Include="..\CartonCaps.Referral.Infrastructure\CartonCaps.Referral.Infrastructure.csproj" />
+    <ProjectReference Include="..\CartonCaps.Application\CartonCaps.Application.csproj" />
+    <ProjectReference Include="..\CartonCaps.Infrastructure\CartonCaps.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

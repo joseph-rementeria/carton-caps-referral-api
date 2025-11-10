@@ -1,4 +1,4 @@
-namespace CartonCaps.Referral.Domain.Enums;
+namespace CartonCaps.Domain.Enums;
 
 public enum ReferralStatus
 {
