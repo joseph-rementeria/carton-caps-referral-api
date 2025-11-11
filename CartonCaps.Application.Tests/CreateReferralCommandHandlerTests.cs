@@ -2,15 +2,11 @@ namespace CartonCaps.Application.Tests;
 
 using Moq;
 using Xunit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using CartonCaps.Application.Commands;
 using CartonCaps.Application.Handlers;
 using CartonCaps.Domain.Repositories;
 using CartonCaps.Domain.Entities;
 using CartonCaps.Domain.ValueObjects;
-using CartonCaps.Domain.Enums;
 
 /// <summary>
 /// Tests for the CreateReferralCommandHandler.
@@ -43,8 +39,8 @@ public class CreateReferralCommandHandlerTests
             .ReturnsAsync(referral);
 
         Exception ex = await Record.ExceptionAsync(() => this.handler.Handle(new CreateReferralCommand("A1B2C3", trackingGuid.ToString()), CancellationToken.None)).ConfigureAwait(true);
-        Assert.IsType<ApplicationException>(ex);
         Assert.NotNull(ex);
+        Assert.IsType<ApplicationException>(ex);
         this.mockRepo.Verify(r => r.AddAsync(It.IsAny<Referral>()), Times.Never());
     }
 
