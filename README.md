@@ -14,10 +14,15 @@ Link for easy access: [SwaggerHub: Carton Caps Referral API](https://app.swagger
 ### Description
 This is a RESTful backend designed using Clean Architecture.
 We have 4 layers:
-* **Domain**: the models of the app, these are categorized in Value Objects and Aggregates
+* **Domain**: the models of the app, these are categorized in Value Objects and Aggregates. **IMPORTANT** it depends on nothing else!. It is the pure core of our app. Defines a common vocabulary and rules for the application's center: its domain.
     * **Domain Objects**: view them as mear measurements encapsulated in classes for their proper validation. For instance: and ID, an email or a referral code.
     * **Aggregates** view them as identifieable objects. in this case a referral instance.
-* **Application**: `to be defined`
+* **Application**: the application layer contains the **usecases** for our app. It further defines the actions that can be done on the agains the application's domain. **IMPORTANT** it depends only on the Domain layer only, nothing else. Here we use an important pattern as well called Command/Query Responsability Segregation ([CQRS](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs)). Here we have the next memorable concepts
+    * **Commands**: in simple words, these are the read-write (WR) usecases.
+    * **Queries**: again, oversimplified, these are the read-only (RO) usecases.
+    * **Datastores**: our source of truth, where the data is resting.
+    * **Eventual consistency**: in CQRS there are two datastores: one RO and the other one RW. To sync them we will use events and delegates, therefore, the WR will see the updates first and eventually, our RO datastore will reflect this changes.
+    * **Mediators**: `to be defined`
 * **Infrastructure**: `to be defined`
 * **API**: Also called presentation layer. `to be defined`
 
