@@ -22,9 +22,7 @@ We have 4 layers:
     * **Queries**: again, oversimplified, these are the read-only (RO) usecases' params.
     * **Handlers**: encapsulates the actual logic of the usecases, either RO or RW.
     * **Mediators**: `to be defined`
-* **Infrastructure**: `to be defined`
-    * **Datastores**: our source of truth, where the data is resting.
-    * **Eventual consistency**: in CQRS there are two datastores: one RO and the other one RW. To sync them we will use events and delegates, therefore, the WR will see the updates first and eventually, our RO datastore will reflect this changes.
+* **Infrastructure**: In this case the infrastructure layer is very thin, it is only a wrapper on top of `List`. This is a tradeoff done for this mock API. normally, this layer will have the heavy translation from DTOs to database or other persisted models and include things like migrations, updates, scripts, queries, calls to stored procedures, etc. But for this API since the Clean Architecture and the overall design and fucntionality is the goal, this layer is the simpliest of them all.
 * **API**: Also called presentation layer. `to be defined`
 
 ### Runing and testing 
