@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartonCaps.API", "CartonCap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartonCaps.Domain.Tests", "CartonCaps.Domain.Tests\CartonCaps.Domain.Tests.csproj", "{BE90DC9D-191F-46FD-AC61-7A8B2C9F607E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartonCaps.Application.Tests", "CartonCaps.Application.Tests\CartonCaps.Application.Tests.csproj", "{58E4F6EE-F2FC-4530-B25E-28CAD1655011}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{BE90DC9D-191F-46FD-AC61-7A8B2C9F607E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE90DC9D-191F-46FD-AC61-7A8B2C9F607E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE90DC9D-191F-46FD-AC61-7A8B2C9F607E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58E4F6EE-F2FC-4530-B25E-28CAD1655011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58E4F6EE-F2FC-4530-B25E-28CAD1655011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58E4F6EE-F2FC-4530-B25E-28CAD1655011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58E4F6EE-F2FC-4530-B25E-28CAD1655011}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
