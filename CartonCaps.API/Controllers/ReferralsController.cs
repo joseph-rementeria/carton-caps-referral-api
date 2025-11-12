@@ -6,25 +6,36 @@ using Microsoft.AspNetCore.RateLimiting;
 using CartonCaps.Application.Commands;
 using CartonCaps.Application.Queries;
 using CartonCaps.Domain.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// Small DTO wrapping the email string just because it is not possible to simply pass a string.
 /// </summary>
 /// <param name="Email">email string.</param>
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record MarkRegisteredEmailRequest([System.ComponentModel.DataAnnotations.Required] string Email);
+public record MarkRegisteredEmailRequest([Required] string Email);
+
+/// <summary>
+/// Wrapps the response for the referral link creation.
+/// </summary>
+/// <param name="ReferralId">The newly created referal id.</param>
+/// <param name="ShareLink">The shareable referral link.</param>
+public record ReferralLinkResponse(Guid ReferralId, string ShareLink);
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 
 /// <summary>
 /// Presentation layer exposing the referral usecases defined in application layer.
 /// </summary>
 /// <param name="mediator">Injected by the DI.</param>
+/// <param name="configuration">The configuration to be loaded.</param>
 [ApiController]
 [Route("api/referrals")]
-public class ReferralsController(IMediator mediator)
+public class ReferralsController(IMediator mediator, IConfiguration configuration)
     : ControllerBase
 {
     private readonly IMediator mediator = mediator;
+    private readonly string baseUrl = configuration["FrontendBaseUrl"] ??
+                          throw new InvalidOperationException("FrontendBaseUrl not configured in appsettings.");
 
     /// <summary>
     /// Create new referral entry.
@@ -32,7 +43,7 @@ public class ReferralsController(IMediator mediator)
     /// <param name="command">contains the referral code and the tracking id.</param>
     /// <returns>The timestamp of when it was created or the reason why failed.</returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ReferralLinkResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [EnableRateLimiting("fixed-create-limit")]
     public async Task<IActionResult> CreateReferral(CreateReferralCommand command)
@@ -43,7 +54,7 @@ public class ReferralsController(IMediator mediator)
             return this.CreatedAtAction(
                 nameof(this.GetReferralById),
                 new { referralId },
-                referralId);
+                new ReferralLinkResponse(referralId, $"{this.baseUrl}?ref={referralId}"));
         }
         catch (DomainException ex)
         {
@@ -77,6 +88,9 @@ public class ReferralsController(IMediator mediator)
     /// <summary>
     /// Mark the referrel as installed,
     /// this is to be called by the third party that handles the deep link.
+    /// IMPORTANT: this endpoint should have some checks on a secret
+    /// token or similar to validate that is the third party application that handles
+    /// the deep link. Due to time constraints this is not implemented.
     /// </summary>
     /// <param name="command">tracking id.</param>
     /// <returns>The result of the operation, whether it was successful or not.</returns>

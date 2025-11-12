@@ -37,6 +37,7 @@ public static class Program
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    // but why? due to time constraints, auth is not fully implemented, here is it just for the userID
                     #pragma warning disable CA5404 // Do not disable token validation checks
                     ValidateIssuer = false,
                     ValidateAudience = false,
@@ -51,18 +52,15 @@ public static class Program
                     NameClaimType = ClaimTypes.NameIdentifier,
                 };
             });
-        var permitLimit = configuration.GetValue("RateLimit:PermitLimit", 5);
-        var windowSeconds = configuration.GetValue("RateLimit:WindowSeconds", 30);
-        var queueLimit = configuration.GetValue("RateLimit:QueueLimit", 2);
 
         builder.Services.AddRateLimiter(options =>
         {
             options.AddFixedWindowLimiter(policyName: "fixed-create-limit", fixedWindowOptions =>
             {
-                fixedWindowOptions.PermitLimit = permitLimit;
-                fixedWindowOptions.Window = TimeSpan.FromSeconds(windowSeconds);
+                fixedWindowOptions.PermitLimit = configuration.GetValue("RateLimit:PermitLimit", 5);
+                fixedWindowOptions.Window = TimeSpan.FromSeconds(configuration.GetValue("RateLimit:WindowSeconds", 30));
                 fixedWindowOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                fixedWindowOptions.QueueLimit = queueLimit;
+                fixedWindowOptions.QueueLimit = configuration.GetValue("RateLimit:QueueLimit", 2);
             });
 
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -82,6 +80,7 @@ public static class Program
             app.UseSwaggerUI();
         }
 
+        // decided to go with minimal api for this as does not have complex logic or dependencies with inner layers.
         app.MapGet("/ping", () => "pong");
 
         app.UseHttpsRedirection();
