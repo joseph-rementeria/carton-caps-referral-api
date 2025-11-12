@@ -110,6 +110,8 @@ paths:
         description: Available in GA API only
   /referrals/{referralId}:
     get:
+      tags:
+      - Referrals
       summary: Get detailed referral status
       description: "Returns the detailed for the given ID, used to get the deep link\
         \ within the details"
