@@ -64,7 +64,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Referral"
         "401":
           description: Unauthorized. User must be authenticated to view the referrals
           content:
@@ -110,6 +112,8 @@ paths:
         description: Available in GA API only
   /referrals/{referralId}:
     get:
+      tags:
+      - Referrals
       summary: Get detailed referral status
       description: "Returns the detailed for the given ID, used to get the deep link\
         \ within the details"
@@ -154,8 +158,8 @@ paths:
       servers:
       - url: /api
         description: Available in GA API only
-  /referrals/events/installed:
-    post:
+  /referrals/installed:
+    put:
       tags:
       - Referrals
       summary: Webhook to update the status to installed
@@ -168,7 +172,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/events_installed_body"
+              $ref: "#/components/schemas/referrals_installed_body"
       responses:
         "204":
           description: Status is successfully updated.
@@ -184,7 +188,7 @@ paths:
       - url: /api
         description: Available in GA API only
   /referrals/{referralId}/registered:
-    post:
+    put:
       tags:
       - Referrals
       summary: Update the status of a referral to registered
@@ -224,7 +228,7 @@ paths:
       - url: /api
         description: Available in GA API only
   /referrals/{referralId}/rewarded:
-    post:
+    put:
       tags:
       - Referrals
       summary: Update status to rewarded
@@ -294,21 +298,11 @@ components:
           format: uuid
     NewReferralResponse:
       required:
-      - referralId
-      - shortUrl
+      - trackingId
       type: object
       properties:
-        referralId:
-          $ref: "#/components/schemas/Referral/properties/referralId"
-        shortUrl:
-          type: string
-          description: Shareable deferred deep link URL to be sent to the referred
-            user
-          format: url
-        deepLinkPayload:
-          type: string
-          description: Third party specific payload needed by the app to get the shareable
-            link
+        trackingId:
+          $ref: "#/components/schemas/Referral/properties/trackingId"
     Error:
       required:
       - errorCode
@@ -323,22 +317,7 @@ components:
           type: string
           description: A human friendly description of the error for either UI or
             logging purposes.
-    inline_response_200:
-      required:
-      - items
-      type: object
-      properties:
-        totalCount:
-          type: integer
-        currentPage:
-          type: integer
-        pageSize:
-          type: integer
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/Referral"
-    events_installed_body:
+    referrals_installed_body:
       required:
       - trackingId
       type: object
