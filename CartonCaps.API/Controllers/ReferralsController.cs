@@ -66,13 +66,9 @@ public class ReferralsController(IMediator mediator)
             ReferralDto? result = await this.mediator.Send(query).ConfigureAwait(true);
             return result is null ? this.NotFound() : this.Ok(result);
         }
-        catch (ArgumentNullException e)
+        catch (Exception e) when (e is ArgumentNullException || e is ArgumentException)
         {
-            return this.NotFound(e);
-        }
-        catch (ArgumentException e)
-        {
-            return this.BadRequest(e);
+            return this.BadRequest(new { error = e.Message });
         }
     }
 
@@ -123,11 +119,11 @@ public class ReferralsController(IMediator mediator)
         }
         catch (ArgumentNullException e)
         {
-            return this.BadRequest(e);
+            return this.BadRequest(new { error = e.Message });
         }
         catch (ArgumentException e)
         {
-            return this.NotFound(e);
+            return this.NotFound(new { error = e.Message });
         }
     }
 
@@ -149,11 +145,11 @@ public class ReferralsController(IMediator mediator)
         }
         catch (ArgumentNullException e)
         {
-            return this.BadRequest(e);
+            return this.BadRequest(new { error = e.Message });
         }
         catch (ArgumentException e)
         {
-            return this.NotFound(e);
+            return this.NotFound(new { error = e.Message });
         }
     }
 
@@ -182,16 +178,13 @@ public class ReferralsController(IMediator mediator)
         try
         {
             var query = new ListReferralsByUserQuery(userId, page, pageSize);
-            await this.mediator.Send(query).ConfigureAwait(true);
-            return this.NoContent();
+            List<ReferralDto>? result =
+                [.. await this.mediator.Send(query).ConfigureAwait(true)];
+            return result is null ? this.NotFound() : this.Ok(result);
         }
-        catch (ArgumentNullException e)
+        catch (Exception e) when (e is ArgumentNullException || e is ArgumentException)
         {
-            return this.NotFound(e);
-        }
-        catch (ArgumentException e)
-        {
-            return this.BadRequest(e);
+            return this.BadRequest(new { error = e.Message });
         }
     }
 }
