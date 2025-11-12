@@ -64,7 +64,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/inline_response_200"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Referral"
         "401":
           description: Unauthorized. User must be authenticated to view the referrals
           content:
@@ -315,21 +317,6 @@ components:
           type: string
           description: A human friendly description of the error for either UI or
             logging purposes.
-    inline_response_200:
-      required:
-      - items
-      type: object
-      properties:
-        totalCount:
-          type: integer
-        currentPage:
-          type: integer
-        pageSize:
-          type: integer
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/Referral"
     referrals_installed_body:
       required:
       - trackingId
