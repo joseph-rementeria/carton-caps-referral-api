@@ -39,6 +39,14 @@ To run the unit tests
 ```
 dotnet test
 ```
+#### Secrets setup
+Setup these secrets in the presentation layer. These can be changed but keep them handy to generate the tokens
+```
+dotnet user-secrets init
+dotnet user-secrets set "Jwt:SecurityKey" "YourLongAndComplexTestingSecretKey12345678"
+dotnet user-secrets set "Jwt:Issuer" "TestIssuer"
+dotnet user-secrets set "Jwt:Audience" "TestAudience"
+```
 
 #### Runing
 In Clean Architecture (or Domain Driven Design). The only layer runnable is the API or presentaion layer. Therefore, to run the app, only the API project is runnable

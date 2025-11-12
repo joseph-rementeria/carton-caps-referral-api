@@ -2,6 +2,7 @@ namespace CartonCaps.API.Controllers;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using CartonCaps.Application.Commands;
 using CartonCaps.Application.Queries;
 using CartonCaps.Domain.Exceptions;
@@ -33,6 +34,7 @@ public class ReferralsController(IMediator mediator)
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [EnableRateLimiting("fixed-create-limit")]
     public async Task<IActionResult> CreateReferral(CreateReferralCommand command)
     {
         try

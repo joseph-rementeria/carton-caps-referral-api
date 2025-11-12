@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
+using System;
+using Microsoft.AspNetCore.RateLimiting;
 
 /// <summary>
 /// the apps entrypoint.
@@ -48,6 +51,22 @@ public static class Program
                     NameClaimType = ClaimTypes.NameIdentifier,
                 };
             });
+        var permitLimit = configuration.GetValue("RateLimit:PermitLimit", 5);
+        var windowSeconds = configuration.GetValue("RateLimit:WindowSeconds", 30);
+        var queueLimit = configuration.GetValue("RateLimit:QueueLimit", 2);
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.AddFixedWindowLimiter(policyName: "fixed-create-limit", fixedWindowOptions =>
+            {
+                fixedWindowOptions.PermitLimit = permitLimit;
+                fixedWindowOptions.Window = TimeSpan.FromSeconds(windowSeconds);
+                fixedWindowOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                fixedWindowOptions.QueueLimit = queueLimit;
+            });
+
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+        });
 
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateReferralCommandHandler).Assembly));
         builder.Services.AddSingleton<IReferralRepository, InMemoryReferralRepository>();
@@ -81,6 +100,8 @@ public static class Program
 
             await next().ConfigureAwait(false);
         });
+
+        app.UseRateLimiter();
 
         app.UseAuthorization();
         app.MapControllers();
