@@ -12,7 +12,26 @@ public class InMemoryReferralRepository : IReferralRepository
 {
     // Static List for in-memory storage. All requests use the same list instance.
     private readonly List<Referral> referrals =
-        [];
+        [
+            Referral.NewReferral(
+                new ReferralCode("A1B2C3"),
+                new TrackingId("1a4b3c4d-5e6f-7080-9102-34567890abcd")),
+            Referral.NewReferral(
+                new ReferralCode("A1B2C3"),
+                new TrackingId("1a2b7c4d-5e6f-7080-9102-34567890abcd")),
+            Referral.NewReferral(
+                new ReferralCode("A1B2C3"),
+                new TrackingId("1a2b3c4d-8e6f-7080-9102-34567890abcd")),
+            Referral.NewReferral(
+                new ReferralCode("A1B2C3"),
+                new TrackingId("1a2b3c4d-5e6f-9080-9102-34567890abcd")),
+            Referral.NewReferral(
+                new ReferralCode("A1B2C3"),
+                new TrackingId("1a2b3c4d-5e6f-7080-0102-34567890abcd")),
+            Referral.NewReferral(
+                new ReferralCode("A1B2C3"),
+                new TrackingId("1a2b3c4d-5e6f-7080-9102-34567890abcd")),
+        ];
 
     /// <summary>
     /// Updates the in memory list.
